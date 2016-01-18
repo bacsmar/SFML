@@ -461,7 +461,13 @@ static void onLowMemory(ANativeActivity* activity)
 {
 }
 
-
+namespace sf
+{
+	void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window) { ::onNativeWindowCreated(activity, window); }
+	void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window) { ::onNativeWindowDestroyed(activity, window); }
+	void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue) { ::onInputQueueCreated(activity, queue); }
+	void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) { ::onInputQueueDestroyed(activity, queue); }
+	void onContentRectChanged(ANativeActivity* activity, const ARect* rect) { ::onContentRectChanged(activity, rect); }
 ////////////////////////////////////////////////////////////
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
@@ -553,5 +559,5 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // Share this state with the callback functions
     activity->instance = states;
 }
-
+} // namespace sf
 #endif // SFML_SYSTEM_ANDROID

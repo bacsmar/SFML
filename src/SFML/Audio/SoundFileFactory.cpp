@@ -45,8 +45,8 @@ namespace
         static bool registered = false;
         if (!registered)
         {
-            sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
-            sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
+            //sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderFlac>();
+            //sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterFlac>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderOgg>();
             sf::SoundFileFactory::registerWriter<sf::priv::SoundFileWriterOgg>();
             sf::SoundFileFactory::registerReader<sf::priv::SoundFileReaderWav>();
