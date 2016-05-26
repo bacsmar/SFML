@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2015 Marco Antognini (antognini.marco@gmail.com),
+//                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,52 +26,27 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundBufferRecorder.hpp>
-#include <algorithm>
-#include <iterator>
+#include <SFML/Config.hpp>
 
-
-namespace sf
-{
-////////////////////////////////////////////////////////////
-SoundBufferRecorder::~SoundBufferRecorder()
-{
-    // Make sure to stop the recording thread
-    stop();
-}
-
+#import <AppKit/AppKit.h>
 
 ////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onStart()
-{
-    m_samples.clear();
-    m_buffer = SoundBuffer();
+/// Extends NSImage with a convenience method to load images
+/// from raw data.
+///
+////////////////////////////////////////////////////////////
 
-    return true;
-}
-
+@interface NSImage (raw)
 
 ////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onProcessSamples(const Int16* samples, std::size_t sampleCount)
-{
-    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
-
-    return true;
-}
-
-
+/// \brief Load an image from raw RGBA pixels
+///
+/// \param pixels array of 4 * `size` bytes representing the image
+/// \param size size of the image
+///
+/// \return an instance of NSImage that needs to be released by the caller
+///
 ////////////////////////////////////////////////////////////
-void SoundBufferRecorder::onStop()
-{
-    if (!m_samples.empty())
-        m_buffer.loadFromSamples(&m_samples[0], m_samples.size(), getChannelCount(), getSampleRate());
-}
++(NSImage*)imageWithRawData:(const sf::Uint8*)pixels andSize:(NSSize)size;
 
-
-////////////////////////////////////////////////////////////
-const SoundBuffer& SoundBufferRecorder::getBuffer() const
-{
-    return m_buffer;
-}
-
-} // namespace sf
+@end

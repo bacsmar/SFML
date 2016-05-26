@@ -26,57 +26,78 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
-
 #import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
 
-////////////////////////////////////////////////////////////
-/// Predefine some classes
-////////////////////////////////////////////////////////////
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
-}
+#import <AppKit/AppKit.h>
 
-@class SFOpenGLView;
-
-////////////////////////////////////////////////////////////
-/// \brief Implementation of WindowImplDelegateProtocol for window management
-///
-/// Key, mouse and Window focus events are delegated to its view, SFOpenGLView.
-///
-/// Used when SFML handle everything and when a NSWindow* is given
-/// as handle to WindowImpl.
-///
-////////////////////////////////////////////////////////////
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
+namespace sf
 {
-    NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
-    SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
-    sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
-    BOOL                        m_fullscreen;       ///< Indicate whether the window is fullscreen or not
+namespace priv
+{
+
+////////////////////////////////////////////////////////////
+/// \brief Get the scale factor of the main screen
+///
+////////////////////////////////////////////////////////////
+inline CGFloat getDefaultScaleFactor()
+{
+    return [[NSScreen mainScreen] backingScaleFactor];
 }
 
 ////////////////////////////////////////////////////////////
-/// \brief Create the SFML window with an external Cocoa window
+/// \brief Scale SFML coordinates to backing coordinates
 ///
-/// \param window Cocoa window to be controlled
-///
-/// \return an initialized controller
+/// \param in SFML coordinates to be converted
+/// \param delegate an object implementing WindowImplDelegateProtocol, or nil for default scale
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithWindow:(NSWindow*)window;
+template <class T>
+void scaleIn(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    in /= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+}
+
+template <class T>
+void scaleInWidthHeight(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleIn(in.width, delegate);
+    scaleIn(in.height, delegate);
+}
+
+template <class T>
+void scaleInXY(T& in, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleIn(in.x, delegate);
+    scaleIn(in.y, delegate);
+}
 
 ////////////////////////////////////////////////////////////
-/// \brief Create the SFML window "from scratch" (SFML handle everything)
+/// \brief Scale backing coordinates to SFML coordinates
 ///
-/// \param mode Video mode
-/// \param style Window's style, as described by sf::Style
-///
-/// \return an initialized controller
+/// \param out backing coordinates to be converted
+/// \param delegate an object implementing WindowImplDelegateProtocol, or nil for default scale
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithMode:(const sf::VideoMode&)mode andStyle:(unsigned long)style;
+template <class T>
+void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    out *= delegate ? [delegate displayScaleFactor] : getDefaultScaleFactor();
+}
 
-@end
+template <class T>
+void scaleOutWidthHeight(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleOut(out.width, delegate);
+    scaleOut(out.height, delegate);
+}
+
+template <class T>
+void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
+{
+    scaleOut(out.x, delegate);
+    scaleOut(out.y, delegate);
+}
+
+} // namespace priv
+} // namespace sf
+

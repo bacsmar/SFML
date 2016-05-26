@@ -26,57 +26,43 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Mouse.hpp>
 
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#import <AppKit/AppKit.h>
 
-////////////////////////////////////////////////////////////
-/// Predefine some classes
-////////////////////////////////////////////////////////////
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
-}
-
-@class SFOpenGLView;
 
 ////////////////////////////////////////////////////////////
-/// \brief Implementation of WindowImplDelegateProtocol for window management
-///
-/// Key, mouse and Window focus events are delegated to its view, SFOpenGLView.
-///
-/// Used when SFML handle everything and when a NSWindow* is given
-/// as handle to WindowImpl.
+/// Here are defined a few private messages for keyboard
+/// handling in SFOpenGLView.
 ///
 ////////////////////////////////////////////////////////////
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
-{
-    NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
-    SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
-    sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
-    BOOL                        m_fullscreen;       ///< Indicate whether the window is fullscreen or not
-}
+
+
+@interface SFOpenGLView (keyboard_priv)
 
 ////////////////////////////////////////////////////////////
-/// \brief Create the SFML window with an external Cocoa window
+/// \brief Convert a key down/up NSEvent into an SFML key event
 ///
-/// \param window Cocoa window to be controlled
+/// The conversion is based on localizedKeys and nonLocalizedKeys functions.
 ///
-/// \return an initialized controller
+/// \param event a key event
+///
+/// \return sf::Keyboard::Unknown as Code if the key is unknown
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithWindow:(NSWindow*)window;
++(sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
 
 ////////////////////////////////////////////////////////////
-/// \brief Create the SFML window "from scratch" (SFML handle everything)
+/// \brief Check if the event represent some Unicode text
 ///
-/// \param mode Video mode
-/// \param style Window's style, as described by sf::Style
+/// The event is assumed to be a key down event.
+/// False is returned if the event is either escape or a non text Unicode.
 ///
-/// \return an initialized controller
+/// \param event a key down event
+///
+/// \return true if event represents a Unicode character, false otherwise
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithMode:(const sf::VideoMode&)mode andStyle:(unsigned long)style;
++(BOOL)isValidTextUnicode:(NSEvent*)event;
 
 @end

@@ -26,57 +26,54 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Mouse.hpp>
 
-#import <SFML/Window/OSX/WindowImplDelegateProtocol.h>
+#import <AppKit/AppKit.h>
 
-////////////////////////////////////////////////////////////
-/// Predefine some classes
-////////////////////////////////////////////////////////////
-namespace sf {
-    namespace priv {
-        class WindowImplCocoa;
-    }
-}
-
-@class SFOpenGLView;
 
 ////////////////////////////////////////////////////////////
-/// \brief Implementation of WindowImplDelegateProtocol for window management
-///
-/// Key, mouse and Window focus events are delegated to its view, SFOpenGLView.
-///
-/// Used when SFML handle everything and when a NSWindow* is given
-/// as handle to WindowImpl.
+/// Here are defined a few private messages for mouse
+/// handling in SFOpenGLView.
 ///
 ////////////////////////////////////////////////////////////
-@interface SFWindowController : NSResponder <WindowImplDelegateProtocol, NSWindowDelegate>
-{
-    NSWindow*                   m_window;           ///< Underlying Cocoa window to be controlled
-    SFOpenGLView*               m_oglView;          ///< OpenGL view for rendering
-    sf::priv::WindowImplCocoa*  m_requester;        ///< Requester
-    BOOL                        m_fullscreen;       ///< Indicate whether the window is fullscreen or not
-}
+
+
+@interface SFOpenGLView (mouse_priv)
 
 ////////////////////////////////////////////////////////////
-/// \brief Create the SFML window with an external Cocoa window
+/// \brief Update the mouse state (in or out)
 ///
-/// \param window Cocoa window to be controlled
-///
-/// \return an initialized controller
+/// Fire an event if its state has changed.
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithWindow:(NSWindow*)window;
+-(void)updateMouseState;
 
 ////////////////////////////////////////////////////////////
-/// \brief Create the SFML window "from scratch" (SFML handle everything)
-///
-/// \param mode Video mode
-/// \param style Window's style, as described by sf::Style
-///
-/// \return an initialized controller
+/// \brief handle mouse down event
 ///
 ////////////////////////////////////////////////////////////
--(id)initWithMode:(const sf::VideoMode&)mode andStyle:(unsigned long)style;
+-(void)handleMouseDown:(NSEvent*)theEvent;
+
+////////////////////////////////////////////////////////////
+/// \brief handle mouse up event
+///
+////////////////////////////////////////////////////////////
+-(void)handleMouseUp:(NSEvent*)theEvent;
+
+////////////////////////////////////////////////////////////
+/// \brief handle mouse move event
+///
+////////////////////////////////////////////////////////////
+-(void)handleMouseMove:(NSEvent*)theEvent;
+
+////////////////////////////////////////////////////////////
+/// \brief Convert the NSEvent mouse button type to SFML type
+///
+/// \param event a mouse button event
+///
+/// \return Left, Right, ..., or ButtonCount if the button is unknown
+///
+////////////////////////////////////////////////////////////
++(sf::Mouse::Button)mouseButtonFromEvent:(NSEvent*)event;
 
 @end

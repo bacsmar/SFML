@@ -25,52 +25,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundBufferRecorder.hpp>
-#include <algorithm>
-#include <iterator>
-
+#include <SFML/System/NativeActivity.hpp>
+#include <SFML/System/Android/Activity.hpp>
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundBufferRecorder::~SoundBufferRecorder()
+ANativeActivity* getNativeActivity()
 {
-    // Make sure to stop the recording thread
-    stop();
-}
-
-
-////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onStart()
-{
-    m_samples.clear();
-    m_buffer = SoundBuffer();
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onProcessSamples(const Int16* samples, std::size_t sampleCount)
-{
-    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundBufferRecorder::onStop()
-{
-    if (!m_samples.empty())
-        m_buffer.loadFromSamples(&m_samples[0], m_samples.size(), getChannelCount(), getSampleRate());
-}
-
-
-////////////////////////////////////////////////////////////
-const SoundBuffer& SoundBufferRecorder::getBuffer() const
-{
-    return m_buffer;
+    return priv::getActivity()->activity;
 }
 
 } // namespace sf
