@@ -320,6 +320,12 @@ static void onDestroy(ANativeActivity* activity)
     // The application should now terminate
 }
 
+////////////////////////////////////////////////////////////
+namespace Pakal
+{
+	void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window);
+	void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window);
+}
 
 ////////////////////////////////////////////////////////////
 static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
@@ -337,6 +343,9 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
+	
+	Pakal::onNativeWindowCreated(activity, window);
+	
     while(!states->updated)
     {
         states->mutex.unlock();
@@ -362,6 +371,9 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
+	
+	Pakal::onNativeWindowDestroyed(activity, window);
+	
     while(!states->updated)
     {
         states->mutex.unlock();
@@ -463,11 +475,6 @@ static void onLowMemory(ANativeActivity* activity)
 
 namespace sf
 {
-	void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window) { ::onNativeWindowCreated(activity, window); }
-	void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window) { ::onNativeWindowDestroyed(activity, window); }
-	void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue) { ::onInputQueueCreated(activity, queue); }
-	void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) { ::onInputQueueDestroyed(activity, queue); }
-	void onContentRectChanged(ANativeActivity* activity, const ARect* rect) { ::onContentRectChanged(activity, rect); }
 ////////////////////////////////////////////////////////////
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {

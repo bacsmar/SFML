@@ -109,6 +109,7 @@ void WindowImplAndroid::processEvents()
     if (m_windowBeingCreated)
     {
         states->context->createSurface(states->window);
+		states->context->makeCurrent();
         m_windowBeingCreated = false;
     }
 

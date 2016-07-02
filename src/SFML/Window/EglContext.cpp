@@ -91,7 +91,7 @@ m_config  (NULL)
     EGLint attrib_list[] = {
         EGL_WIDTH, 1,
         EGL_HEIGHT,1,
-        EGL_NONE
+        EGL_NONE,0
     };
 
     m_surface = eglCheck(eglCreatePbufferSurface(m_display, m_config, attrib_list));
@@ -195,9 +195,11 @@ void EglContext::setVerticalSyncEnabled(bool enabled)
 ////////////////////////////////////////////////////////////
 void EglContext::createContext(EglContext* shared)
 {
+	EGLint OpenGLESVersion = 2;	// 1 openGLES 1, 2 openGLES2
+
     const EGLint contextVersion[] = {
-        EGL_CONTEXT_CLIENT_VERSION, 1,
-        EGL_NONE
+        EGL_CONTEXT_CLIENT_VERSION, OpenGLESVersion,
+        EGL_NONE, 0
     };
 
     EGLContext toShared;
@@ -215,6 +217,12 @@ void EglContext::createContext(EglContext* shared)
 ////////////////////////////////////////////////////////////
 void EglContext::createSurface(EGLNativeWindowType window)
 {
+#if defined(SFML_SYSTEM_ANDROID)
+	EGLint Format = 0;
+	eglGetConfigAttrib(m_display, m_config, EGL_NATIVE_VISUAL_ID, &Format);
+
+	ANativeWindow_setBuffersGeometry(window, 0, 0, Format);
+#endif
     m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, window, NULL));
 }
 
@@ -235,13 +243,21 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 {
     // Set our video settings constraint
     const EGLint attributes[] = {
+		EGL_RED_SIZE, 8,
+		EGL_GREEN_SIZE, 8,
+		EGL_BLUE_SIZE, 8,
+		//EGL_ALPHA_SIZE, Params.WithAlphaChannel ? 1 : 0,
+
         EGL_BUFFER_SIZE, bitsPerPixel,
         EGL_DEPTH_SIZE, settings.depthBits,
         EGL_STENCIL_SIZE, settings.stencilBits,
         EGL_SAMPLE_BUFFERS, settings.antialiasingLevel,
+		EGL_SAMPLES, settings.antialiasingLevel != 0,
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-        EGL_NONE
+        //EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+        //EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+        EGL_NONE,0
     };
 
     EGLint configCount;
