@@ -13,6 +13,9 @@ endmacro()
 # determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
 
+# Suppress Cygwin legacy warning
+set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+
 # set Android specific options
 
 # define the minimum API level to be used
@@ -31,6 +34,8 @@ if(NOT ANDROID_ABI)
     set(ANDROID_ABI armeabi-v7a)
 endif()
 
+#end of Android specific options
+
 # project name
 project(SFML)
 
@@ -39,8 +44,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake)
 
 # setup version numbers
 set(VERSION_MAJOR 2)
-set(VERSION_MINOR 3)
-set(VERSION_PATCH 2)
+set(VERSION_MINOR 4)
+set(VERSION_PATCH 1)
 
 # add the SFML header path
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
