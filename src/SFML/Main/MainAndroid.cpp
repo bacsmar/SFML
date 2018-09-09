@@ -320,6 +320,12 @@ static void onDestroy(ANativeActivity* activity)
     // The application should now terminate
 }
 
+////////////////////////////////////////////////////////////
+namespace Pakal
+{
+	void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window);
+	void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window);
+}
 
 ////////////////////////////////////////////////////////////
 static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
@@ -337,6 +343,9 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
+	
+	Pakal::onNativeWindowCreated(activity, window);
+	
     while(!states->updated)
     {
         states->mutex.unlock();
@@ -362,6 +371,9 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* wi
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
+	
+	Pakal::onNativeWindowDestroyed(activity, window);
+	
     while(!states->updated)
     {
         states->mutex.unlock();
@@ -461,7 +473,8 @@ static void onLowMemory(ANativeActivity* activity)
 {
 }
 
-
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize)
 {
@@ -553,5 +566,5 @@ void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_
     // Share this state with the callback functions
     activity->instance = states;
 }
-
+} // namespace sf
 #endif // SFML_SYSTEM_ANDROID

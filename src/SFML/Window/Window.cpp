@@ -81,7 +81,7 @@ Window::~Window()
 
 
 ////////////////////////////////////////////////////////////
-void Window::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings)
+void Window::create(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings,bool skipContext)
 {
     // Destroy the previous window implementation
     close();
@@ -124,7 +124,8 @@ void Window::create(VideoMode mode, const String& title, Uint32 style, const Con
     m_impl = priv::WindowImpl::create(mode, title, style, settings);
 
     // Recreate the context
-    m_context = priv::GlContext::create(settings, m_impl, mode.bitsPerPixel);
+	if (!skipContext)
+		m_context = priv::GlContext::create(settings, m_impl, mode.bitsPerPixel);
 
     // Perform common initializations
     initialize();

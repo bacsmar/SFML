@@ -129,7 +129,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    void create(VideoMode mode, const String& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
+    void create(VideoMode mode, const String& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings(),bool skipContext = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
